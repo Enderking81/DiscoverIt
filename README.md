@@ -1,4 +1,5 @@
 # Propuesta TP DSW
+> Hay pendientes cambios importantes del alcance por la baja de compañeros
 
 ## Grupo
 
@@ -6,8 +7,11 @@
 - (leg) - Bay, Victoria M
 - 51742 - Quaglia, Mateo.
 
+### Repositorios
+- [App backend](https://github.com/Enderking81/backendDiscoverIt)
+- [App frontend](https://github.com/Enderking81/frontendDiscoverIt)
 
-## Tema
+# Tema
 # DISCOVER IT
 
 ## Descripción del Proyecto:
