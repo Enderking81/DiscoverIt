@@ -1,40 +1,98 @@
 # Propuesta TP DSW
-> Hay pendientes cambios importantes del alcance por la baja de compañeros
 
 ## Grupo
 
 ### Integrantes
-- (leg) - Bay, Victoria M
-- 51742 - Quaglia, Mateo.
+- 51742 - Quaglia, Mateo
 
 ### Repositorios
-- [App backend](https://github.com/Enderking81/backendDiscoverIt)
-- [App frontend](https://github.com/Enderking81/frontendDiscoverIt)
+- [Frontend](https://github.com/Enderking81/frontendDiscoverIt)
+- [Backend](https://github.com/Enderking81/backendDiscoverIt)
 
-# Tema
-# DISCOVER IT
+## Tema
 
-## Descripción del Proyecto:
-
-Discover It es una aplicación donde los usuarios publican opiniones sobre puntos de interés (PdI) (lugares, restaurantes, música y eventos) mediante una calificación y un comentario. Cada usuario puede indicar sus preferencias (categorías de PdI) y el sistema le recomendará opciones similares con buenas puntuaciones. Los usuarios pueden seguir a otros, ganando credibilidad en la app. El sistema permite ingresar como un usuario invitado (anónimo) para ver los Puntos mejor calificados sin crear una cuenta antes. Los PdI también son creados por los mismos usuarios.
+### Descripción
+DiscoverIt es una plataforma para descubrir lugares de Rosario: restaurantes, museos, bares, parques y más. Cualquier visitante puede explorar los lugares, filtrarlos por categoría, buscarlos por nombre o dirección y verlos en un mapa. Los usuarios registrados recomiendan lugares con un puntaje de 1 a 5 y una opinión, y con esas recomendaciones se calcula el rating de cada lugar. También pueden guardar lugares en favoritos. Un administrador gestiona las categorías y los lugares publicados.
 
 ### Modelo
-![imagen del modelo](Esquema_DCD_TP_DSW.jpg)
 
+```mermaid
+classDiagram
+    direction LR
 
-## Alcance Funcional 
+    class User {
+        id
+        nickname
+        email
+        password (hash)
+        isAdmin
+    }
+    class Profile {
+        id
+        bio
+        avatar
+        location
+        birthdate
+    }
+    class Category {
+        id
+        name
+        description
+    }
+    class PlaceProduct {
+        id
+        name
+        description
+        location
+        image
+        averageRating
+        latitude
+        longitude
+    }
+    class Recommendation {
+        id
+        points (1 a 5)
+        description
+        createdAt
+    }
 
-Regularidad:
-| Req               | Detalle                                                                                                 |
-|-------------------|---------------------------------------------------------------------------------------------------------|
-| CRUD simple       | 1. CRUD User <br> 2. CRUD PlaceProduct                                                                       |
-| CRUD dependiente  | 1. CRUD Recomendation {depende de} CRUD PlaceProduct                                                    |
-| Listado + detalle | 1. Listado de productos o lugares filtrado por tipo, muestra principales comentarios y recomendaciones. |
-| CUU/Epic          | 1. Recomendar un producto/lugar <br> 2. Realizar un comentario                                               |  
+    User "1" -- "1" Profile : tiene
+    Category "1" -- "0..*" PlaceProduct : clasifica
+    User "1" -- "0..*" Recommendation : escribe
+    PlaceProduct "1" -- "0..*" Recommendation : recibe
+    User "0..*" -- "0..*" PlaceProduct : favoritos
+```
+
+## Alcance Funcional
 
 ### Alcance Mínimo
 
-| Req      | Detalle  |
+Regularidad:
+|Req|Detalle|
 |:-|:-|
-| CRUD     | 1. CRUD User<br> 2. CRUD PlaceProduct <br>3. CRUD Comment <br>4. CRUD Recomendation <br>5. CRUD Profile<br> 6. CRUD Reward |
-| CUU/Epic | 1. Recomendar un producto/lugar <br>2. Realizar un comentario <br>3. Canjear recompensas acumuladas |
+|CRUD simple|1. CRUD Category|
+|CRUD dependiente|1. CRUD PlaceProduct {depende de} CRUD Category|
+|Listado<br>+<br>detalle|1. Listado de lugares filtrado por categoría y por texto (nombre o dirección) => detalle con descripción, ubicación en el mapa, rating promedio y recomendaciones|
+|CUU/Epic|1. Recomendar un lugar|
+
+Adicionales para Aprobación:
+|Req|Detalle|
+|:-|:-|
+|CRUD|1. CRUD Category<br>2. CRUD PlaceProduct<br>3. CRUD User (registro, perfil, edición y baja de la cuenta)<br>4. CRUD Profile<br>5. CRUD Recommendation {depende de} CRUD User y CRUD PlaceProduct|
+|CUU/Epic|1. Publicar un lugar (administrador)<br>2. Recomendar un lugar (usuario)<br>Están relacionados: el lugar que publica el administrador es lo que el usuario recomienda, y cada recomendación recalcula el rating del lugar.|
+
+### Alcance Adicional Voluntario
+
+|Req|Detalle|
+|:-|:-|
+|Listados|1. Mis favoritos<br>2. Panel de administración con estadísticas del sistema|
+|CUU/Epic|1. Guardar un lugar en favoritos|
+|Otros|1. Mapa interactivo de los lugares<br>2. Moderación: el administrador puede eliminar cualquier recomendación<br>3. Modo oscuro|
+
+## Niveles de acceso
+
+|Nivel|Puede|
+|:-|:-|
+|Invitado|Explorar, filtrar y ver el detalle de los lugares|
+|Usuario|Lo anterior, más recomendar lugares, editar o borrar sus recomendaciones, gestionar favoritos y su perfil|
+|Administrador|Lo anterior, más gestionar categorías y lugares, ver estadísticas y moderar recomendaciones|
